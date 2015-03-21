@@ -1,0 +1,61 @@
+
+First install iteration with 2015.03.01 release of Arch Linux. Booted to archiso. Less than 10 seconds system startup.
+
+Partitioning:
+gdisk /dev/sda        # one-time setup follows: delete Windows 8 non-recovery partitions
+Command: d 2
+Command: d 3
+# Create new partitions: /
+Command: n
+Size: 32G
+# Create partition: /home
+Command: n
+Size: <default is max>
+# Commit
+Command: w
+Proceed? Y
+
+Filesystems:
+mkfs -t ext4 /dev/sda2
+mkfs -t ext4 /dev/sda3
+tune2fs /dev/sda2 -L root
+tune2fs /dev/sda3 -L home
+tune2fs /dev/sda3 -m 1.25
+
+System setup:
+mount -t ext4 /dev/sda2 /mnt -o defaults,noatime,discard
+mkdir /mnt/home /mnt/esp /mnt/boot
+mount -t ext4 /dev/sda3 /mnt/home -o defaults,noatime,discard
+mount -t vfat /dev/sda1 /mnt/esp -o default,noatime
+mount --bind /mnt/esp/EFI/arch /mnt/boot
+
+vi /etc/pacman.d/mirrorlist    # some preferred servers are:
+osuosl.org
+rackspace.org
+gatech.edu
+xmission.com
+metrocast.net
+illinois.edu
+vtti.vt.edu
+mirrors.nix.org
+uni-bayreuth.de
+
+# Bootstrap, this is the big one!
+pacstrap /mnt base
+# pacstrap /mnt base  32.40s user 6.55s system 10% cpu 6:28.87 total # time stats on install 1
+
+# boot preparation
+genfstab -L -p /mnt >>/mnt/etc/fstab
+arch-chroot /mnt
+echo mastercat >/etc/hostname
+ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime
+#uncomment locale en_US.UTF-8 in /etc/locale.gen
+locale-gen
+echo LANG=en_US.UTF-8 >/etc/locale.conf
+
+pacman -S sudo wpa_supplicant vim
+
+passwd
+
+# Create boot entry in system NVRAM, repeat of this step is unlikely to be necessary
+efibootmgr -d /dev/sda -p Y -c -L “Arch Linux” -l /EFI/arch/vmlinuz-linux -u “root=/dev/sda2 rw,noatime,discard,data=ordered initrd=/EFI/arch/initramfs-linux.img”
