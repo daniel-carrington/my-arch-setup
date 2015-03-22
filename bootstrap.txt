@@ -5,6 +5,7 @@ Partitioning:
 gdisk /dev/sda        # one-time setup follows: delete Windows 8 non-recovery partitions
 Command: d 2
 Command: d 3
+
 # Create new partitions: /
 Command: n
 Size: 32G
@@ -58,4 +59,4 @@ pacman -S sudo wpa_supplicant vim
 passwd
 
 # Create boot entry in system NVRAM, repeat of this step is unlikely to be necessary
-efibootmgr -d /dev/sda -p Y -c -L “Arch Linux” -l /EFI/arch/vmlinuz-linux -u “root=/dev/sda2 rw,noatime,discard,data=ordered initrd=/EFI/arch/initramfs-linux.img”
+efibootmgr -d /dev/sda -p Y -c -L 'Arch Linux' -l /EFI/arch/vmlinuz-linux -u 'root=/dev/sda2 rw,noatime,discard,data=ordered initrd=/EFI/arch/initramfs-linux.img'
