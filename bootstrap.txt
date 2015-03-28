@@ -54,7 +54,8 @@ ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime
 locale-gen
 echo LANG=en_US.UTF-8 >/etc/locale.conf
 
-pacman -S sudo wpa_supplicant vim
+pacman -S sudo wpa_supplicant vim openssh ntpd git
+
 
 passwd
 

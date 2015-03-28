@@ -1,0 +1,6 @@
+
+### /etc/ssh/sshd_config
+# Change the following settings:
+PermitRootLogin no
+MaxAuthTries 2
+PasswordAuthentication no
