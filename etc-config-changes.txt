@@ -1,6 +1,21 @@
 
 ### /etc/ssh/sshd_config
-# Change the following settings:
-PermitRootLogin no
-MaxAuthTries 2
-PasswordAuthentication no
+# tighten SSH access restrictions
+sudo sed -e '
+/PermitRootLogin/ {
+ s/^#//
+ s/yes/no/
+}
+/MaxAuthTries/ {
+ s/^#//
+ s/MaxAuthTries .*/MaxAuthTries 2/
+}
+/PasswordAuthentication/ {
+ s/^#//
+ s/yes/no/
+}
+' /etc/ssh/sshd_config
+
+### /etc/systemd/timesyncd.conf
+# Uncomment list of fallback ntp servers
+sudo sed -e 's/^#FallbackNTP/FallbackNTP/' /etc/systemd/timesyncd.conf
